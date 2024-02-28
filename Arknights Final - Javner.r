@@ -2,7 +2,7 @@
 # IT 461
 # 26 Feb 2024
 #
-# Arknights Final
+# Arknights Final Project
 
 # Set Working Directory
 setwd("G:/My Drive/School/Tacoma CC/IT 441/Scripts")
@@ -11,47 +11,123 @@ setwd("G:/My Drive/School/Tacoma CC/IT 441/Scripts")
 getwd()
 
 # Read CSV file & saves to variable
-AK_CSV <- read.csv("Arknights Data.csv") # nolint: object_name_linter.
+ak_csv <- read.csv("Arknights Data.csv") 
 
 # Display available columns in CSV file
-ls(AK_CSV)
+ls(ak_csv)
 
-# Display # of unique Operators
-message("Number of Playable Operators in Arknights")
-length(AK_CSV$name)
+# Return # of total operators
+length(ak_csv$name)
 
-# Display Operator Rarity & their associated Class
-# AK_CSV[,c("name", "stars", "class")]
+###########################################################
+#
+# Table Section
+#
+###########################################################
 
-AK_LS <- (AK_CSV[, c("name", "stars", "class")]) # nolint: object_name_linter.
+library(data.table)
 
-#summary(AK_LS)
+# Table built containing Operators Name, Class, & Rarity
+ak_table <- data.table(Name = ak_csv$name,
+                       Class = ak_csv$class,
+                       Rarity = ak_csv$stars)
 
-#head(AK_LS)
+# Display the top 25x entries
+head(ak_table, 25)
 
-#tail(AK_LS)
+###########################################################
+#
+# Bar Graph Section
+#
+###########################################################
 
-#AK_CSV[AK_CSV$class == "Guard", ]
 
-# Returns True if search matches value
-AK_CSV$class == "Guard"
+# Returns True/False if matches "Guard" under class column
+# ak_csv$class == "Guard"
 
-total_Vanguard <- sum(AK_CSV$class == "Vanguard") # nolint: object_name_linter.
-total_Guard <- sum(AK_CSV$class == "Guard") # nolint: object_name_linter.
-total_Defender <- sum(AK_CSV$class == "Defender") # nolint: object_name_linter.
-total_Sniper <- sum(AK_CSV$class == "Sniper") # nolint: object_name_linter.
-total_Caster <- sum(AK_CSV$class == "Caster") # nolint: object_name_linter.
-total_Medic <- sum(AK_CSV$class == "Medic") # nolint: object_name_linter.
-total_Support <- sum(AK_CSV$class == "Supporter") # nolint: object_name_linter.
-total_Specialist <- sum(AK_CSV$class == "Specialist") # nolint: object_name_linter, line_length_linter.
+# Parses through all Operators by class
+# Sum() function totals all True values meeting critiera
+total_vanguard <- sum(ak_csv$class == "Vanguard")
+total_guard <- sum(ak_csv$class == "Guard")
+total_defender <- sum(ak_csv$class == "Defender")
+total_sniper <- sum(ak_csv$class == "Sniper")
+total_caster <- sum(ak_csv$class == "Caster")
+total_medic <- sum(ak_csv$class == "Medic")
+total_support <- sum(ak_csv$class == "Supporter")
+total_specialist <- sum(ak_csv$class == "Specialist")
 
-# Create the data for the chart
-class_total <- c(total_Vanguard, total_Guard, total_Defender, total_Sniper, total_Caster, total_Medic, total_Support, total_Specialist) # nolint: line_length_linter.
+# Numbers used for bars
+class_total <- c(total_vanguard, total_guard, total_defender, total_sniper, total_caster, total_medic, total_support, total_specialist)
+
+# x-axis Bar Labels
 class_name <- c("Vanguard", "Guard", "Defender", "Sniper", "Caster", "Medic", "Support", "Specialist")
- 
-# Plot the bar chart
+
+# Creates the bar chart
+#       xlab = x-axis label
+#       ylab = y-axis label
+#       col = bar graph color
+#       main = title of graph
+#       cex.main = title font size
+#       cex.lab = x-axis font size
+#       cex.axis = y-axis font size
+#       ylim = creates the y-axis limits w/ range() being 0 - class_total value
+#               pretty() creates a sequence of n + 1;
 barplot(class_total, names.arg = class_name, xlab = "Classes",
-        ylab = "Numbers", col = "steelblue",
-        main = "Arknights Total Numbers by Class",
+        ylab = "Number of Operators", col = "steelblue",
+        main = "Arknights: Total Operators by Class",
         cex.main = 2.0, cex.lab = 1.5, cex.axis = 1.0,
         ylim = range(pretty(c(0, class_total))))
+
+###########################################################
+#
+# Pie Chart Section
+#
+###########################################################
+
+# Color Palette library
+library(RColorBrewer)
+
+# Parses through all Operators by Gender
+# Sum() function totals all True values meeting critiera
+total_males <- sum(ak_csv$gender == "Male")
+total_females <- sum(ak_csv$gender == "Female")
+
+# Data for Pie Chart
+ak_gender <- c(total_males, total_females)
+
+# Percentage (Label) for Pie Chart
+# Equation Example => 100 * MALE / total_operators
+#       round() equation to 2 decimal places
+#       paste0() adds the % of String
+gender_ratio <- paste0(round(100 * ak_gender / sum(ak_gender), 2), "%")
+
+# Color for Pie Chart
+color_palette <- brewer.pal(3, "Pastel1")
+
+# Creates the pie chart
+pie(ak_gender, labels = gender_ratio, col = color_palette)
+
+legend("topleft", legend = c("Female", "Male"),
+       fill =  c("lightblue", "mistyrose"))
+
+###########################################################
+#
+# Scatter Plot Section
+#
+###########################################################
+
+library("ggplot2")
+
+# Create Vector containing Operators Class being Guard
+ak_guards <- subset(ak_csv, class == "Guard")
+
+# Creates Scatter Plot
+#       aes() maps variables to visual properties; the aesthetics
+#       geom_point() used to create scatterplot
+ak_plot <- ggplot(ak_guards, aes(x = base_hp, y = base_atk)) + geom_point()
+
+# Add Labels (Title, x-axis, y-axis)
+ak_plot_fin <- ak_plot + labs(x = "Base HP", y = "Base ATK", title = "Guard Operators: HP vs Atk")
+
+# Display the finished scatter plot
+ak_plot_fin
