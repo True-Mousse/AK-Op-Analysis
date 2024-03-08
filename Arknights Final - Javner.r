@@ -11,7 +11,7 @@ setwd("G:/My Drive/School/Tacoma CC/IT 441/Scripts")
 getwd()
 
 # Read CSV file & saves to variable
-ak_csv <- read.csv("Arknights Data.csv") 
+ak_csv <- read.csv("Arknights Data.csv")
 
 # Display available columns in CSV file
 ls(ak_csv)
@@ -41,12 +41,9 @@ head(ak_table, 25)
 #
 ###########################################################
 
-
 # Returns True/False if matches "Guard" under class column
-# ak_csv$class == "Guard"
-
-# Parses through all Operators by class
-# Sum() function totals all True values meeting critiera
+#       Parses through all Operators by class
+#       Sum() function totals all True values meeting critiera
 total_vanguard <- sum(ak_csv$class == "Vanguard")
 total_guard <- sum(ak_csv$class == "Guard")
 total_defender <- sum(ak_csv$class == "Defender")
@@ -57,10 +54,10 @@ total_support <- sum(ak_csv$class == "Supporter")
 total_specialist <- sum(ak_csv$class == "Specialist")
 
 # Numbers used for bars
-class_total <- c(total_vanguard, total_guard, total_defender, total_sniper, total_caster, total_medic, total_support, total_specialist)
+class_total <- c(total_vanguard, total_guard, total_defender, total_sniper, total_caster, total_medic, total_support, total_specialist)  
 
 # x-axis Bar Labels
-class_name <- c("Vanguard", "Guard", "Defender", "Sniper", "Caster", "Medic", "Support", "Specialist")
+class_name <- c("Vanguard", "Guard", "Defender", "Sniper", "Caster", "Medic", "Support", "Specialist")                                    
 
 # Creates the bar chart
 #       xlab = x-axis label
@@ -74,8 +71,8 @@ class_name <- c("Vanguard", "Guard", "Defender", "Sniper", "Caster", "Medic", "S
 #               pretty() creates a sequence of n + 1;
 barplot(class_total, names.arg = class_name, xlab = "Classes",
         ylab = "Number of Operators", col = "steelblue",
-        main = "Arknights: Total Operators by Class",
-        cex.main = 2.0, cex.lab = 1.5, cex.axis = 1.0,
+        main = "Operators by Class",
+        cex.main = 4.0, cex.lab = 2.0, cex.axis = 2.0,
         ylim = range(pretty(c(0, class_total))))
 
 ###########################################################
@@ -105,7 +102,7 @@ gender_ratio <- paste0(round(100 * ak_gender / sum(ak_gender), 2), "%")
 color_palette <- brewer.pal(3, "Pastel1")
 
 # Creates the pie chart
-pie(ak_gender, labels = gender_ratio, col = color_palette)
+pie(ak_gender, labels = gender_ratio, main = "Operator Gender Ratio", col = color_palette)  
 
 legend("topleft", legend = c("Female", "Male"),
        fill =  c("lightblue", "mistyrose"))
@@ -127,7 +124,7 @@ ak_guards <- subset(ak_csv, class == "Guard")
 ak_plot <- ggplot(ak_guards, aes(x = base_hp, y = base_atk)) + geom_point()
 
 # Add Labels (Title, x-axis, y-axis)
-ak_plot_fin <- ak_plot + labs(x = "Base HP", y = "Base ATK", title = "Guard Operators: HP vs Atk")
+ak_plot_fin <- ak_plot + labs(x = "Base HP", y = "Base ATK", title = "Guard Operators: Base HP vs Base Atk")  
 
 # Display the finished scatter plot
 ak_plot_fin
